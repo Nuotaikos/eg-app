@@ -1,19 +1,21 @@
 Projektą paleisite `npm start`
 
-Atidarykite [http://localhost:3000](http://localhost:3000) ir naršyklėje pamatysite projektą. http://localhost:3000/
+Atidarykite [http://localhost:3000](http://localhost:3000) ir naršyklėje pamatysite projektą.
 
 ## Administratoriaus ir vartotojo prisijungimo langas
 
 Atidarykite http://localhost:3000/login
 
-### administratorius
+### Administratorius `Administratorius`
 
 Administratoriaus vardas: lape
+
 Administratoriaus slaptažodis: 123
 
-### vartotojas
+### Vartotojas
 
 Vartotojo vardas: bebras
+
 Vartotojo slaptažodis: 123
 
 ## Administracinė sritis
