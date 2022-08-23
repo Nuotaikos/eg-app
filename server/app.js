@@ -238,6 +238,22 @@ app.delete("/admin/photos/:id", (req, res) => {
   });
 });
 
+//Front
+//READ masters
+app.get("/master", (req, res) => {
+  const sql = `
+SELECT b.id, b.name_surname, spec, photo, c.title AS cat, city
+FROM master AS b
+LEFT JOIN cats AS c
+ON c.id = b.cats_id
+ORDER BY title
+`;
+  con.query(sql, (err, result) => {
+    if (err) throw err;
+    res.send(result);
+  });
+});
+
 app.listen(port, () => {
   console.log(`Autoservisas porte Nr ${port}`);
 });
