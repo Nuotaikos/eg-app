@@ -20,101 +20,101 @@ const con = mysql.createConnection({
   database: "egzaminas",
 });
 
-// const doAuth = function (req, res, next) {
-//   if (0 === req.url.indexOf('/admin')) { // admin
-//     const sql = `
-//       SELECT
-//       name, role
-//       FROM users
-//       WHERE session = ?
-//   `;
-//     con.query(
-//       sql, [req.headers['authorization'] || ''],
-//       (err, results) => {
-//         if (err) throw err;
-//         if (!results.length || results[0].role !== 'admin') {
-//           res.status(401).send({});
-//           req.connection.destroy();
-//         } else {
-//           next();
-//         }
-//       }
-//     );
-//   } else if (0 === req.url.indexOf('/login-check') || 0 === req.url.indexOf('/login')) {
-//     next();
-//   } else { // fron
-//     const sql = `
-//       SELECT
-//       name, role
-//       FROM users
-//       WHERE session = ?
-//   `;
-//     con.query(
-//       sql, [req.headers['authorization'] || ''],
-//       (err, results) => {
-//         if (err) throw err;
-//         if (!results.length) {
-//           res.status(401).send({});
-//           req.connection.destroy();
-//         } else {
-//           next();
-//         }
-//       }
-//     );
-//   }
-// }
-// app.use(doAuth)
+const doAuth = function (req, res, next) {
+  if (0 === req.url.indexOf('/admin')) { // admin
+    const sql = `
+      SELECT
+      name, role
+      FROM users
+      WHERE session = ?
+  `;
+    con.query(
+      sql, [req.headers['authorization'] || ''],
+      (err, results) => {
+        if (err) throw err;
+        if (!results.length || results[0].role !== 'admin') {
+          res.status(401).send({});
+          req.connection.destroy();
+        } else {
+          next();
+        }
+      }
+    );
+  } else if (0 === req.url.indexOf('/login-check') || 0 === req.url.indexOf('/login')) {
+    next();
+  } else { // fron
+    const sql = `
+      SELECT
+      name, role
+      FROM users
+      WHERE session = ?
+  `;
+    con.query(
+      sql, [req.headers['authorization'] || ''],
+      (err, results) => {
+        if (err) throw err;
+        if (!results.length) {
+          res.status(401).send({});
+          req.connection.destroy();
+        } else {
+          next();
+        }
+      }
+    );
+  }
+}
+app.use(doAuth)
 
-// // AUTH
-// app.get("/login-check", (req, res) => {
-//   let sql;
-//   let requests;
-//   if (req.query.role === 'admin') {
-//     sql = `
-//       SELECT
-//       name
-//       FROM users
-//       WHERE session = ? AND role = ?
-//       `;
-//     requests = [req.headers['authorization'] || '', req.query.role];
-//   } else {
-//     sql = `
-//       SELECT
-//       name
-//       FROM users
-//       WHERE session = ?
-//       `;
-//     requests = [req.headers['authorization'] || ''];
-//   }
-//   con.query(sql, requests, (err, result) => {
-//     if (err) throw err;
-//     if (!result.length) {
-//       res.send({ msg: 'error' });
-//     } else {
-//       res.send({ msg: 'ok' });
-//     }
-//   });
-// });
+// AUTH
+app.get("/login-check", (req, res) => {
+  let sql;
+  let requests;
+  if (req.query.role === 'admin') {
+    sql = `
+      SELECT
+      name
+      FROM users
+      WHERE session = ? AND role = ?
+      `;
+    requests = [req.headers['authorization'] || '', req.query.role];
+  } else {
+    sql = `
+      SELECT
+      name
+      FROM users
+      WHERE session = ?
+      `;
+    requests = [req.headers['authorization'] || ''];
+  }
+  con.query(sql, requests, (err, result) => {
+    if (err) throw err;
+    if (!result.length) {
+      res.send({ msg: 'error' });
+    } else {
+      res.send({ msg: 'ok' });
+    }
+  });
+});
 
-// app.post("/login", (req, res) => {
-//   const key = uuid.v4();
-//   const sql = `
-//   UPDATE users
-//   SET session = ?
-//   WHERE name = ? AND pass = ?
-// `;
-//   con.query(sql, [key, req.body.user, md5(req.body.pass)], (err, result) => {
-//     if (err) throw err;
-//     if (!result.affectedRows) {
-//       res.send({ msg: 'error', key: '' });
-//     } else {
-//       res.send({ msg: 'ok', key });
-//     }
-//   });
-// });
+app.post("/login", (req, res) => {
+  const key = uuid.v4();
+  const sql = `
+  UPDATE users
+  SET session = ?
+  WHERE name = ? AND pass = ?
+`;
+  con.query(sql, [key, req.body.user, md5(req.body.pass)], (err, result) => {
+    if (err) throw err;
+    if (!result.affectedRows) {
+      res.send({ msg: 'error', key: '' });
+    } else {
+      res.send({ msg: 'ok', key });
+    }
+  });
+});
 
 
-// CATEGORIES
+//  create service 
 // function to make a POST req to the server to insert data to MySQL db
 app.post("/admin/service", (req, res) => {
   const sql = `
@@ -125,6 +125,33 @@ app.post("/admin/service", (req, res) => {
   con.query(sql, [req.body.title], (err, result) => {
     if (err) throw err;
     res.send({ result, msg: { text: 'OK, new Cat was created', type: 'success' } });
+  });
+});
+
+// Read service
+// Our app should be able to get and return all data ( the books) in the MySQL database.
+app.get("/admin/service", (req, res) => {
+  const sql = `
+SELECT *                           /*selectinam viska*/
+FROM cats
+ORDER BY title                     /*rusiuojam pagal title*/
+`;
+  con.query(sql, (err, result) => {
+    if (err) throw err;
+    res.send(result);
+  });
+});
+
+//delete service
+// iš lentelės ištrins konkrečią eilutę pagal parametruose pateiktą ID reikšmę
+app.delete("/admin/service/:id", (req, res) => {
+  const sql = `
+  DELETE FROM cats
+  WHERE id = ?
+  `;
+  con.query(sql, [req.params.id], (err, result) => {
+    if (err) throw err;
+    res.send({ result, msg: { text: 'OK, Cat gone', type: 'success' } });
   });
 });
 
