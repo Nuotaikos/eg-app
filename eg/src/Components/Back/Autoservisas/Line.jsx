@@ -3,14 +3,14 @@ import BackContext from '../BackContext';
 
 function Line({ line }) {
 
-  const { setDeleteCat } = useContext(BackContext);
+  const { setDeleteCat, setModalCat } = useContext(BackContext);
 
   const handleDelete = () => { //Paspaudus ant mygtuko delete pasileis handleDelete funkcija > pasetins I cat(line), o line yra id ir title
     setDeleteCat(line);
   }
 
   const handleEdit = () => {
-    // setModalCat(line);
+    setModalCat(line); /* mygtukas, kuris iskviecia modala */
   }
 
   return (

@@ -11,17 +11,19 @@ function Back({ show }) {
 
   const [createCat, setCreateCat] = useState(null); //setCreateCat atiduodam provaideriui 
   const [deleteCat, setDeleteCat] = useState(null); //setDeleteCat
+  const [editCat, setEditCat] = useState(null);     //setEditCat atiduodam provaideriui
+  const [modalCat, setModalCat] = useState(null);   //setModalCat ir modalCat - atvaizduos modala
 
   const [lastUpdate, setLastUpdate] = useState(Date.now());
 
-  // Read cat
+  // Read service
   useEffect(() => {
     axios.get('http://localhost:3003/admin/service', authConfig())
       .then(res => setCats(res.data));
   }, [lastUpdate]);
 
 
-  // Create cat
+  // Create service
   // useEffect Funkcija, kuri nurodys, ką paleisti pasikeitus būsenai
 
   useEffect(() => {
@@ -32,7 +34,7 @@ function Back({ show }) {
       })
   }, [createCat]);
 
-  // Delete cat
+  // Delete service
   useEffect(() => {
     if (null === deleteCat) return; //Pasikeitus deleteCat, jei jis ne 0, siunciame to cato id i admin cat
     axios.delete('http://localhost:3003/admin/service/' + deleteCat.id, authConfig()) //deleteCat.id: siunciam cat id, o ne katina, todel +, o ne kablelis
@@ -45,6 +47,19 @@ function Back({ show }) {
       })
   }, [deleteCat]);
 
+  // Edit info service
+  useEffect(() => {
+    if (null === editCat) return; /* editCat (is virsau) –  tai viena kategorija, kurioje yra id ir title */
+    axios.put('http://localhost:3003/admin/service/' + editCat.id, editCat, authConfig()) /* editCat – perdavinesim title */
+      .then(res => {
+        showMessage(res.data.msg);
+        setLastUpdate(Date.now());
+      })
+      .catch(error => {
+        showMessage({ text: error.message, type: 'danger' });
+      })
+  }, [editCat]);
+
   const showMessage = () => {
   }
 
@@ -52,7 +67,10 @@ function Back({ show }) {
     <BackContext.Provider value={{
       setCreateCat,
       cats,
-      setDeleteCat
+      setDeleteCat,
+      setEditCat,
+      setModalCat,
+      modalCat  /* atvaizduos modala */
     }}>
       {
         show === 'admin' ?

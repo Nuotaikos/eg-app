@@ -155,6 +155,20 @@ app.delete("/admin/service/:id", (req, res) => {
   });
 });
 
+//Edit service
+// The PUT route will be responsible for updating any data to our database. (atsakingas už bet kokių duomenų atnaujinimą DB)
+app.put("/admin/service/:id", (req, res) => {
+  const sql = `
+  UPDATE cats
+  SET title = ?
+  WHERE id = ?
+  `;
+  con.query(sql, [req.body.title, req.params.id], (err, result) => {
+    if (err) throw err;
+    res.send({ result, msg: { text: 'OK, Cat updated. Now it is as new', type: 'success' } });
+  });
+});
+
 app.listen(port, () => {
   console.log(`Autoservisas porte Nr ${port}`);
 });
