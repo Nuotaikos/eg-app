@@ -129,7 +129,7 @@ app.post("/admin/service", (req, res) => {
 });
 
 // Read service
-// Our app should be able to get and return all data ( the books) in the MySQL database.
+// Our app should be able to get and return all data ( the service) in the MySQL database.
 app.get("/admin/service", (req, res) => {
   const sql = `
 SELECT *                           /*selectinam viska*/
@@ -168,6 +168,38 @@ app.put("/admin/service/:id", (req, res) => {
     res.send({ result, msg: { text: 'OK, Cat updated. Now it is as new', type: 'success' } });
   });
 });
+
+
+// Create Master
+app.post("/admin/master", (req, res) => {
+  const sql = `
+  INSERT INTO master
+  (name_surname, spec, photo, city, cats_id)
+  VALUES (?, ?, ?, ?, ?)
+  `;
+  con.query(sql, [req.body.name_surname, req.body.spec, req.body.photo, req.body.city, req.body.cat], (err, result) => {
+    if (err) throw err;
+    res.send({ result, msg: { text: 'OK, new and shiny product was created', type: 'success' } });
+  });
+});
+
+//READ Master
+//GET -  galimybė gauti ir grąžinti visus duomenis MySQL duomenų bazėje.
+app.get("/admin/master", (req, res) => {
+  const sql = `
+SELECT p.id, name_surname, spec, photo, city, c.title AS cat
+FROM master AS p
+LEFT JOIN cats AS c
+ON c.id = p.cats_id
+ORDER BY title
+`;
+  con.query(sql, (err, result) => {
+    if (err) throw err;
+    res.send(result);
+  });
+});
+
+
 
 app.listen(port, () => {
   console.log(`Autoservisas porte Nr ${port}`);

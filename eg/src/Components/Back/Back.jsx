@@ -14,6 +14,9 @@ function Back({ show }) {
   const [editCat, setEditCat] = useState(null);     //setEditCat atiduodam provaideriui
   const [modalCat, setModalCat] = useState(null);   //setModalCat ir modalCat - atvaizduos modala
 
+  const [masters, setMasters] = useState(null); //masters > pr
+  const [createMaster, setCreateMaster] = useState(null); //setCreateMaster i provider, createMaster i useEffect
+
   const [lastUpdate, setLastUpdate] = useState(Date.now());
 
   // Read service
@@ -60,6 +63,26 @@ function Back({ show }) {
       })
   }, [editCat]);
 
+  // Create master
+  useEffect(() => {
+    if (null === createMaster) return;
+    axios.post('http://localhost:3003/admin/master', createMaster, authConfig())
+      .then(res => {
+        showMessage(res.data.msg);
+        setLastUpdate(Date.now());
+      })
+      .catch(error => {
+        showMessage({ text: error.message, type: 'danger' });
+      })
+  }, [createMaster]);
+
+  // Read master
+  useEffect(() => {
+    axios.get('http://localhost:3003/admin/master', authConfig())
+      .then(res => setMasters(res.data));
+  }, [lastUpdate]);
+
+
   const showMessage = () => {
   }
 
@@ -70,7 +93,9 @@ function Back({ show }) {
       setDeleteCat,
       setEditCat,
       setModalCat,
-      modalCat  /* atvaizduos modala */
+      modalCat,  /* atvaizduos modala */
+      setCreateMaster,
+      masters
     }}>
       {
         show === 'admin' ?
