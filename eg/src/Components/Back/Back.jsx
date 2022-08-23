@@ -16,6 +16,10 @@ function Back({ show }) {
 
   const [masters, setMasters] = useState(null); //masters > pr
   const [createMaster, setCreateMaster] = useState(null); //setCreateMaster i provider, createMaster i useEffect
+  const [deleteMaster, setDeleteMaster] = useState(null); //setDeleteMaster i provider, deleteMaster i useEffect
+  const [editMaster, setEditMaster] = useState(null);     //setEditMaster > provider,
+  const [modalMaster, setModalMaster] = useState(null);   //modalMaster ir setModalMaster > provider
+  const [deletePhoto, setDeletePhoto] = useState(null); //setDeletePhoto i provider, deletePhoto i useEffect
 
   const [lastUpdate, setLastUpdate] = useState(Date.now());
 
@@ -82,6 +86,45 @@ function Back({ show }) {
       .then(res => setMasters(res.data));
   }, [lastUpdate]);
 
+  // Delete master
+  //trinam pagal master id - deleteMaster.id
+  useEffect(() => {
+    if (null === deleteMaster) return;
+    axios.delete('http://localhost:3003/admin/master/' + deleteMaster.id, authConfig())
+      .then(res => {
+        showMessage(res.data.msg);
+        setLastUpdate(Date.now());
+      })
+      .catch(error => {
+        showMessage({ text: error.message, type: 'danger' });
+      })
+  }, [deleteMaster]);
+
+  // Edit Master
+  useEffect(() => {
+    if (null === editMaster) return;
+    axios.put('http://localhost:3003/admin/master/' + editMaster.id, editMaster, authConfig())
+      .then(res => {
+        showMessage(res.data.msg);
+        setLastUpdate(Date.now());
+      })
+      .catch(error => {
+        showMessage({ text: error.message, type: 'danger' });
+      })
+  }, [editMaster]);
+
+  // delete Photo
+  useEffect(() => {
+    if (null === deletePhoto) return;
+    axios.delete('http://localhost:3003/admin/photos/' + deletePhoto.id, authConfig())
+      .then(res => {
+        showMessage(res.data.msg);
+        setLastUpdate(Date.now());
+      })
+      .catch(error => {
+        showMessage({ text: error.message, type: 'danger' });
+      })
+  }, [deletePhoto]);
 
   const showMessage = () => {
   }
@@ -95,7 +138,12 @@ function Back({ show }) {
       setModalCat,
       modalCat,  /* atvaizduos modala */
       setCreateMaster,
-      masters
+      masters,
+      setDeleteMaster, //i line perduodam
+      setEditMaster,
+      setModalMaster,
+      modalMaster,
+      setDeletePhoto
     }}>
       {
         show === 'admin' ?

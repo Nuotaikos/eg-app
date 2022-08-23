@@ -3,14 +3,14 @@ import BackContext from '../BackContext';
 
 function Line({ line }) { //paima ({ line }) ir returne is line atspausdinam title, price ir t.t.
 
-  const { a } = useContext(BackContext);
+  const { setDeleteMaster, setModalMaster } = useContext(BackContext);
 
   const handleDelete = () => { //Paspaudus ant mygtuko delete pasileis handleDelete funkcija > pasetins I cat(line), o line yra id ir title
-    // setDeleteCat(line);
+    setDeleteMaster(line);
   }
 
   const handleEdit = () => {
-    // setModalCat(line); /* mygtukas, kuris iskviecia modala */
+    setModalMaster(line); /* mygtukas, kuris iskviecia modala */
   }
 
   return (

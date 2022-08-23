@@ -199,7 +199,44 @@ ORDER BY title
   });
 });
 
+// delete master
+// iš lentelės ištrins konkrečią eilutę pagal parametruose pateiktą ID reikšmę
+app.delete("/admin/master/:id", (req, res) => {
+  const sql = `
+  DELETE FROM master
+  WHERE id = ?
+  `;
+  con.query(sql, [req.params.id], (err, result) => {
+    if (err) throw err;
+    res.send({ result, msg: { text: 'OK, Book gone', type: 'success' } });
+  });
+});
 
+// Edit master
+app.put("/admin/master/:id", (req, res) => {
+  const sql = `
+  UPDATE master
+  SET name_surname = ?, spec = ?, photo = ?, city = ?, cats_id = ?
+  WHERE id = ?
+  `;
+  con.query(sql, [req.body.name_surname, req.body.spec, req.body.photo, req.body.city, req.body.cat, req.params.id], (err, result) => {
+    if (err) throw err;
+    res.send({ result, msg: { text: 'OK, Category updated. Now it is as new', type: 'success' } });
+  });
+});
+
+// delete Photo
+app.delete("/admin/photos/:id", (req, res) => {
+  const sql = `
+  UPDATE master
+  SET photo = null
+  WHERE id = ?
+  `;
+  con.query(sql, [req.params.id], (err, result) => {
+    if (err) throw err;
+    res.send({ result, msg: { text: 'OK, photo gone.', type: 'success' } });
+  });
+});
 
 app.listen(port, () => {
   console.log(`Autoservisas porte Nr ${port}`);
